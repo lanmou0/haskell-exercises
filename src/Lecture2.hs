@@ -297,10 +297,10 @@ Write a function that takes and expression and performs "Constant
 Folding" optimization on the given expression.
 -}
 constantFolding :: Expr -> Expr
-constantFolding es = let res = reduceTree 0 es in
-  case res of
-    (_, 0) -> fst res
-    (_, _) -> Add (fst res) (Lit (snd res))
+constantFolding es = let (expr, lit) = reduceTree 0 es in
+  case lit of
+    0 -> expr
+    _ -> Add expr (Lit lit)
 
 reduceTree :: Num a => a -> Expr -> (Expr, a)
 reduceTree acc es = case es of 
