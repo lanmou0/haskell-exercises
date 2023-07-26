@@ -302,7 +302,7 @@ constantFolding es = let (expr, lit) = reduceTree 0 es in
     0 -> expr
     _ -> Add expr (Lit lit)
 
-reduceTree :: Num a => a -> Expr -> (Expr, a)
+reduceTree :: Int -> Expr -> (Expr, Int)
 reduceTree acc es = case es of 
   Lit a -> (Lit a, acc+a)
   Var x -> (Var x, acc)
