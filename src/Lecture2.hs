@@ -268,7 +268,12 @@ data EvalError
 It returns either a successful evaluation result or an error.
 -}
 eval :: Variables -> Expr -> Either EvalError Int
-eval = error "TODO"
+eval vs es = case es of 
+  Lit a -> Right a
+  Var x 
+    | Just a <- lookup x vs -> Right a
+    | otherwise -> Left (VariableNotFound x)
+  Add e e' -> (+) <$> eval vs e <*> eval vs e'
 
 {- | Compilers also perform optimizations! One of the most common
 optimizations is "Constant Folding". It performs arithmetic operations
@@ -292,4 +297,17 @@ Write a function that takes and expression and performs "Constant
 Folding" optimization on the given expression.
 -}
 constantFolding :: Expr -> Expr
-constantFolding = error "TODO"
+constantFolding es = let res = reduceTree 0 es in
+  case res of
+    (_, 0) -> fst res
+    (_, _) -> Add (fst res) (Lit (snd res))
+
+reduceTree :: Num a => a -> Expr -> (Expr, a)
+reduceTree acc es = case es of 
+  Lit a -> (Lit a, acc+a)
+  Var x -> (Var x, acc)
+  Add (Lit a) e -> reduceTree (acc+a) e
+  Add e (Lit a) -> reduceTree (acc+a) e
+  Add e e1 -> let (eExpr, eLit) = reduceTree acc e
+                  (e1Expr, e1Lit) = reduceTree acc e1
+              in  (Add eExpr e1Expr, acc + eLit + e1Lit)
