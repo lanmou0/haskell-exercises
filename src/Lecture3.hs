@@ -60,7 +60,8 @@ of a weekday.
 >>> toShortString Monday
 "Mon"
 -}
-toShortString = error "TODO"
+toShortString :: Weekday -> String
+toShortString = take 3 . show
 
 {- | Write a function that returns next day of the week, following the
 given day.
@@ -82,7 +83,15 @@ Tuesday
   would work for **any** enumeration type in Haskell (e.g. 'Bool',
   'Ordering') and not just 'Weekday'?
 -}
-next = error "TODO"
+
+instance Bounded Weekday where
+ minBound = Monday
+ maxBound = Sunday
+
+next :: (Bounded a, Enum a) => a -> a
+next w 
+ | w == maxBound = minBound 
+ | otherwise = succ w
 
 {- | Implement a function that calculates number of days from the first
 weekday to the second.
@@ -92,7 +101,9 @@ weekday to the second.
 >>> daysTo Friday Wednesday
 5
 -}
-daysTo = error "TODO"
+
+daysTo :: Weekday -> Weekday -> Int
+daysTo w w1 = (toEnum w1) - (toEnum w)
 
 {-
 
